@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+def ppid; File.new("/proc/self/status").readlines.grep(/ppid:/i).first; end
+while sleep(1);
+  puts "0:#{ppid}";
+  fork {
+    puts "1:#{ppid}";
+    fork {
+      sleep(0.5);
+      puts "2:#{ppid}";
+    }
+  };
+  while pid = Process.waitpid(0, Process::WNOHANG);
+    puts "WaitedPid:#{pid.inspect}"
+  end
+end
